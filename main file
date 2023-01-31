@@ -1,0 +1,92 @@
+package org.geekster.mail;
+
+import javax.mail.*;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
+import java.io.File;
+import java.io.IOException;
+import java.util.Properties;
+import java.util.Scanner;
+
+public class EmailTemplate {
+    public static void main(String[] args) {
+        //Scanner sc= new Scanner(System.in);
+        String fromAddress = "tyagiaman9719@gmail.com";
+        String toAddress = "amantyagi707@gmail.com";
+        String ccAddress= "tyagimeenakshi804@gmail.com";
+        String messageBody= "Welcome to Aman's Demo mail..";
+        try {
+            //sendMailWithoutAttachment(fromAddress,toAddress,ccAddress,messageBody);
+
+                sendMailWithAttachment(fromAddress,toAddress,ccAddress,messageBody);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static void sendMailWithoutAttachment(String fromAddress, String toAddress, String ccAddress,String messageBody) throws MessagingException {
+        Session session= getSession();
+
+        //2. Compose the mail.
+        MimeMessage message= new MimeMessage(session);
+        message.setFrom(fromAddress);
+        message.addRecipients(Message.RecipientType.TO,toAddress);
+        message.addRecipients(Message.RecipientType.CC,ccAddress);
+        message.setSubject("Geekster Email Demo");
+        message.setText(messageBody);
+
+        //3. Send the mail.
+        Transport.send(message);
+        System.out.println("Email sent successfully");
+    }
+
+    private static Session getSession(){
+        //Properties needes:
+        // 1. Host Name
+        //2. Port Number
+        //3. ssl level
+        //4. authentication parameters
+        Properties properties = System.getProperties();
+        properties.put("mail.smtp.host","smtp.gmail.com");
+        properties.put("mail.smtp.port","465");
+        properties.put("mail.smtp.ssl.enable","true");
+        properties.put("mail.smtp.auth","true");
+
+        //1. Creating session to connect with Gmail server.
+        Session session = Session.getInstance(properties, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication("tyagiaman9719@gmail.com",Constant.PASSWORD);
+            }
+        });
+        return session;
+    }
+    public static void sendMailWithAttachment(String fromAddress, String toAddress, String ccAddress,String messageBody) throws MessagingException, IOException {
+        Session session= getSession();
+        MimeMessage message= new MimeMessage(session);
+        message.setFrom(fromAddress);
+        message.addRecipients(Message.RecipientType.TO,toAddress);
+        message.addRecipients(Message.RecipientType.CC,ccAddress);
+        message.setSubject("Geekster Email Demo With Attachment");
+        // Setting body with attachment.
+        String path = "C://Users//DELL//Documents//shirt.txt";
+        MimeMultipart mimeMultipart= new MimeMultipart();
+        MimeBodyPart bodytext= new MimeBodyPart();
+        MimeBodyPart bodyattachment = new MimeBodyPart();
+
+        bodytext.setText(messageBody);
+        File file = new File(path);
+        bodyattachment.attachFile(file);
+        mimeMultipart.addBodyPart(bodytext);
+        mimeMultipart.addBodyPart(bodyattachment);
+        message.setContent(mimeMultipart);
+
+        Transport.send(message);
+        System.out.println("Email sent successfully");
+    }
+}
