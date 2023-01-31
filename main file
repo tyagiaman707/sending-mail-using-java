@@ -61,7 +61,7 @@ public class EmailTemplate {
         Session session = Session.getInstance(properties, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("tyagiaman9719@gmail.com",Constant.PASSWORD);
+                return new PasswordAuthentication("XXXXXX@gmail.com",Constant.PASSWORD);
             }
         });
         return session;
